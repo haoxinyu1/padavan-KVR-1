@@ -84,9 +84,9 @@ typedef u_int8_t u8;
 //如果你要修改的话 请注意后面的序号，每个插件对应的序号不能相同  不能超过63 你可以删掉不需要的 把序号给你需要的插件
 //#define EVM_RESTART_NFSD			(1ULL << 38) //nfsd文件系统
 #define EVM_RESTART_EASYTIER			(1ULL << 38) // Easyier异地组网
-// #define EVM_RESTART_DMS				(1ULL << 39) //Minidlna UPnP 媒体服务器
 // #define EVM_RESTART_ITUNES			(1ULL << 40) //Firefly iTunes 媒体服务器
-#define EVM_RESTART_SS_TUNNEL			(1ULL << 39) //科学上网插件
+#define EVM_RESTART_V2RAYA			(1ULL << 39) //V2RAYA
+// #define EVM_RESTART_SS_TUNNEL			(1ULL << 39) //科学上网插件
 //#define EVM_RESTART_TRMD			(1ULL << 40) //#TRANSMISSION
 #define EVM_RESTART_ALIDDNS			(1ULL << 40) //阿里ddns
 // #define EVM_RESTART_DDNSTO	    		(1ULL << 40) //ddnsto内网穿透
@@ -96,7 +96,8 @@ typedef u_int8_t u8;
 #define EVM_RESTART_TTYD			(1ULL << 43) //ttyd网页终端
 //#define EVM_RESTART_VLMCSD			(1ULL << 44) //微软服务
 #define EVM_RESTART_ALIST			(1ULL << 44) //alist文件列表
-#define EVM_RESTART_SHADOWSOCKS		(1ULL << 45) //科学上网ss
+#define EVM_RESTART_DMS				(1ULL << 45) //Minidlna UPnP 媒体服务器
+// #define EVM_RESTART_SHADOWSOCKS		(1ULL << 45) //科学上网ss
 #define EVM_RESTART_SMARTDNS	    		(1ULL << 46) //smartdns加速
 // #define EVM_RESTART_DNSFORWARDER		(1ULL << 47) //dns转发
 #define EVM_RESTART_CLOUDFLARE			(1ULL << 47)  //CF的ddns
@@ -118,7 +119,6 @@ typedef u_int8_t u8;
 #define EVM_RESTART_VNTS			(1ULL << 58) //vnt服务器
 #define EVM_RESTART_VNTCLI			(1ULL << 59) //vnt客户端
 //#define EVM_RESTART_NVPPROXY			(1ULL << 60) 
-//#define EVM_RESTART_V2RAYA			(1ULL << 60) //V2RAYA
 #define EVM_RESTART_NATPIERCE			(1ULL << 60) //皎月连
 #define EVM_RESTART_TAILSCALE			(1ULL << 61) //taislacle
 #define EVM_RESTART_REBOOT			(1ULL << 62) //重启
