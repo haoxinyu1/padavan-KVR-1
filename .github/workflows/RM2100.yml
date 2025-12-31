@@ -41,11 +41,21 @@ jobs:
         sh dl_toolchain.sh
         mkdir -p /opt/images/
         
-        ##### 修改内存空间和 storage空间13m
-        sed -i 's/SIZ=0x0400000/SIZ=0x0d00000/g' /opt/$REPO_NAME/trunk/configs/boards/RM2100/kernel-3.4.x-5.0.config
-        sed -i 's/size_etc="6M"/size_etc="13M"/g' /opt/$REPO_NAME/trunk/user/scripts/dev_init.sh
-        sed -i 's/size_tmp="24M"/size_tmp="30M"/g' /opt/$REPO_NAME/trunk/user/scripts/dev_init.sh
-        sed -i 's/mtd_part_size=65536/mtd_part_size=13631488/g' /opt/$REPO_NAME/trunk/user/scripts/mtd_storage.sh
+        ##### 推荐平衡方案：Storage 80M，固件预留 48M，Tmp 64M #####
+        
+        # 1. 修改 Storage 为 80MB (0x5000000)
+        # 预留 48MB 给固件，绝对安全，哪怕以后固件膨胀一倍也能用
+        sed -i 's/SIZ=0x0400000/SIZ=0x5000000/g' /opt/$REPO_NAME/trunk/configs/boards/RM2100/kernel-3.4.x-5.0.config
+        
+        # 2. 修改 dev_init.sh 显示
+        sed -i 's/size_etc="6M"/size_etc="80M"/g' /opt/$REPO_NAME/trunk/user/scripts/dev_init.sh
+        
+        # 3. 修改 tmp 为 64M (确保上传 25M 固件万无一失)
+        sed -i 's/size_tmp="24M"/size_tmp="64M"/g' /opt/$REPO_NAME/trunk/user/scripts/dev_init.sh
+        
+        # 4. 修改字节限制 (80 * 1024 * 1024 = 83886080)
+        sed -i 's/mtd_part_size=65536/mtd_part_size=83886080/g' /opt/$REPO_NAME/trunk/user/scripts/mtd_storage.sh
+
     - name: Build Firmware
       env:
         TNAME: RM2100
@@ -461,9 +471,9 @@ jobs:
         #echo "CONFIG_FIRMWARE_INCLUDE_V2RAYA=n" >> .config #v2raya 已删除 /trunk/user/httpd/common.h
         #echo "CONFIG_FIRMWARE_INCLUDE_NVPPROXY=n" >> .config #NVPPROXY 已删除 请查看/trunk/user/httpd/common.h
         ##科学上网##
-        echo "CONFIG_FIRMWARE_INCLUDE_SHADOWSOCKS=y" >> .config #SS plus+ 科学上网插件
+        echo "CONFIG_FIRMWARE_INCLUDE_SHADOWSOCKS=n" >> .config #SS plus+ 科学上网插件
         echo "CONFIG_FIRMWARE_INCLUDE_V2RAY=n" >> .config #无需集成会在线下载
-        echo "CONFIG_FIRMWARE_INCLUDE_XRAY=y" >> .config #无需集成会在线下载
+        echo "CONFIG_FIRMWARE_INCLUDE_XRAY=n" >> .config #无需集成会在线下载
         echo "CONFIG_FIRMWARE_INCLUDE_TROJAN=n" >> .config #无需集成会在线下载
         echo "CONFIG_FIRMWARE_INCLUDE_SSOBFS=n" >> .config # simple-obfs混淆插件
         
