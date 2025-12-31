@@ -32,23 +32,31 @@ jobs:
       env:
         KERNEL: 3.4
       run: |
-        git clone --depth=1 https://github.com/${GITHUB_REPOSITORY}.git /opt/rt-n56u
-        cd /opt/rt-n56u/toolchain-mipsel
+        # 使用变量来获取仓库名称，使脚本更具通用性
+        REPO_NAME=$(basename ${{ github.repository }})
+        git clone --depth=1 https://github.com/${GITHUB_REPOSITORY}.git /opt/$REPO_NAME
+        # 将源码根目录路径存入环境变量，方便后续步骤使用
+        echo "SRC_DIR=/opt/$REPO_NAME" >> $GITHUB_ENV
+        cd /opt/$REPO_NAME/toolchain-mipsel
         sh dl_toolchain.sh
         mkdir -p /opt/images/
         
         ##### 修改内存空间和 storage空间13m
-        sed -i 's/SIZ=0x0400000/SIZ=0x0d00000/g' /opt/rt-n56u/trunk/configs/boards/RM2100/kernel-3.4.x-5.0.config
-        sed -i 's/size_etc="6M"/size_etc="13M"/g' /opt/rt-n56u/trunk/user/scripts/dev_init.sh
-        sed -i 's/size_tmp="24M"/size_tmp="30M"/g' /opt/rt-n56u/trunk/user/scripts/dev_init.sh
-        sed -i 's/mtd_part_size=65536/mtd_part_size=13631488/g' /opt/rt-n56u/trunk/user/scripts/mtd_storage.sh
+        sed -i 's/SIZ=0x0400000/SIZ=0x0d00000/g' /opt/$REPO_NAME/trunk/configs/boards/RM2100/kernel-3.4.x-5.0.config
+        sed -i 's/size_etc="6M"/size_etc="13M"/g' /opt/$REPO_NAME/trunk/user/scripts/dev_init.sh
+        sed -i 's/size_tmp="24M"/size_tmp="30M"/g' /opt/$REPO_NAME/trunk/user/scripts/dev_init.sh
+        sed -i 's/mtd_part_size=65536/mtd_part_size=13631488/g' /opt/$REPO_NAME/trunk/user/scripts/mtd_storage.sh
     - name: Build Firmware
       env:
         TNAME: RM2100
         KERNEL: 3.4
-        MHZ: 1200  # <--- 新增：定义CPU超频频率，必须为20的倍数
+        MHZ: 1200  # 定义CPU超频频率，必须为20的倍数
       run: |
-        cd /opt/rt-n56u/trunk
+        # 从环境变量中获取源码根目录路径
+        SRC_DIR=${{ env.SRC_DIR }}
+        TRUNK_DIR=$SRC_DIR/trunk
+        
+        cd $TRUNK_DIR
         if [ ! -f configs/templates/$TNAME.config ] ; then
         echo "configs/templates/$TNAME.config 没有找到 "
         exit 1
@@ -56,17 +64,29 @@ jobs:
         cp -f configs/templates/$TNAME.config .config
         
         ############################################################################################
-        # 新增：CPU超频设置
+        # 新增：CPU超频设置 (已根据您提供的完整路径修正)
         ############################################################################################
         echo "CPU超频到${MHZ}mhz"
         echo "修改CPU频率"
         # 计算16进制的寄存器值
         clock=`echo "obase=16 ; ibase=10 ; (((($MHZ/20)-1)*16+2))" | bc`
         echo "16进制值: $clock"
-        # 修改内核源码中的CPU频率设置
-        # 注意：这里的路径是相对于 /opt/rt-n56u/trunk 的
-        sed -i "554,555s:0xff:0x7ff:g" ../linux-3.4.x/arch/mips/rt2880/init.c
-        sed -i "554,556s:0xc2:0x$clock:g" ../linux-3.4.x/arch/mips/rt2880/init.c
+        
+        # 根据您提供的完整路径 trunk/linux-3.4.x/arch/mips/rt2880/init.c
+        # 构建绝对路径
+        INIT_C_FILE="$TRUNK_DIR/linux-3.4.x/arch/mips/rt2880/init.c"
+        
+        # 检查文件是否存在，如果不存在则报错退出
+        if [ ! -f "$INIT_C_FILE" ]; then
+            echo "错误：找不到内核初始化文件 $INIT_C_FILE"
+            echo "请检查源码目录结构是否正确。"
+            exit 1
+        fi
+        
+        # 使用绝对路径修改文件
+        sed -i "554,555s:0xff:0x7ff:g" "$INIT_C_FILE"
+        sed -i "554,556s:0xc2:0x$clock:g" "$INIT_C_FILE"
+        echo "CPU频率修改完成。"
         ############################################################################################
         
         sed -i 's/CONFIG_FIRMWARE_INCLUDE_OPENSSL_EXE=n/CONFIG_FIRMWARE_INCLUDE_OPENSSL_EXE=y/g' .config
