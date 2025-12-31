@@ -309,8 +309,8 @@
 			{0,0,0,0}
 		};
 
-	struct variable variables_Storage[] = {
-			{"computer_name", "", NULL, EVM_RESTART_DHCPD|EVM_RESTART_FTPD|EVM_RESTART_NMBD|EVM_RESTART_DMS|EVM_RESTART_ITUNES},
+	// struct variable variables_Storage[] = {
+	// 		{"computer_name", "", NULL, EVM_RESTART_DHCPD|EVM_RESTART_FTPD|EVM_RESTART_NMBD|EVM_RESTART_DMS|EVM_RESTART_ITUNES},
 #if defined(APP_SMBD)
 			{"enable_samba", "", NULL, EVM_RESTART_SMBD},
 			{"st_samba_fp", "", NULL, EVM_RESTART_SYSCTL},
