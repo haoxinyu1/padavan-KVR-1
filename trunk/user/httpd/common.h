@@ -90,7 +90,6 @@ typedef u_int8_t u8;
 //#define EVM_RESTART_TRMD			(1ULL << 40) //#TRANSMISSION
 #define EVM_RESTART_DDNSTO	    		(1ULL << 40) //ddnsto内网穿透
 #define EVM_RESTART_FRP	    			(1ULL << 41) //frp内网穿透
-// #define EVM_RESTART_CLOUDFLARE			(1ULL << 41)  //CF的ddns
 #define EVM_RESTART_ARIA			(1ULL << 42) //aria2c文件下载
 //#define EVM_RESTART_SCUT			(1ULL << 43) //校园网
 #define EVM_RESTART_TTYD			(1ULL << 43) //ttyd网页终端
@@ -99,7 +98,8 @@ typedef u_int8_t u8;
 #define EVM_RESTART_SHADOWSOCKS		(1ULL << 45) //科学上网ss
 // #define EVM_RESTART_ALIDDNS			(1ULL << 45) //阿里ddns
 #define EVM_RESTART_SMARTDNS	    		(1ULL << 46) //smartdns加速
-#define EVM_RESTART_DNSFORWARDER		(1ULL << 47) //dns转发
+// #define EVM_RESTART_DNSFORWARDER		(1ULL << 47) //dns转发
+#define EVM_RESTART_CLOUDFLARE			(1ULL << 47)  //CF的ddns
 #define EVM_RESTART_CADDY			(1ULL << 48) //caddy文件管理
 #define EVM_RESTART_ADGUARDHOME			(1ULL << 49) //adg去广告
 //#define EVM_RESTART_MENTOHUST			(1ULL << 50) //校园认证
