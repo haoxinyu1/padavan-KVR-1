@@ -41,20 +41,24 @@ jobs:
         sh dl_toolchain.sh
         mkdir -p /opt/images/
         
-        ##### 推荐平衡方案：Storage 80M，固件预留 48M，Tmp 64M #####
-        
-        # 1. 修改 Storage 为 80MB (0x5000000)
-        # 预留 48MB 给固件，绝对安全，哪怕以后固件膨胀一倍也能用
-        sed -i 's/SIZ=0x0400000/SIZ=0x5000000/g' /opt/$REPO_NAME/trunk/configs/boards/RM2100/kernel-3.4.x-5.0.config
-        
-        # 2. 修改 dev_init.sh 显示
-        sed -i 's/size_etc="6M"/size_etc="80M"/g' /opt/$REPO_NAME/trunk/user/scripts/dev_init.sh
-        
-        # 3. 修改 tmp 为 64M (确保上传 25M 固件万无一失)
-        sed -i 's/size_tmp="24M"/size_tmp="64M"/g' /opt/$REPO_NAME/trunk/user/scripts/dev_init.sh
-        
-        # 4. 修改字节限制 (80 * 1024 * 1024 = 83886080)
-        sed -i 's/mtd_part_size=65536/mtd_part_size=83886080/g' /opt/$REPO_NAME/trunk/user/scripts/mtd_storage.sh
+        # ##### 修改内存空间和 storage空间13m
+        # sed -i 's/SIZ=0x0400000/SIZ=0x0d00000/g' /opt/$REPO_NAME/trunk/configs/boards/RM2100/kernel-3.4.x-5.0.config
+        # sed -i 's/size_etc="6M"/size_etc="13M"/g' /opt/$REPO_NAME/trunk/user/scripts/dev_init.sh
+        # sed -i 's/size_tmp="24M"/size_tmp="30M"/g' /opt/$REPO_NAME/trunk/user/scripts/dev_init.sh
+        # sed -i 's/mtd_part_size=65536/mtd_part_size=13631488/g' /opt/$REPO_NAME/trunk/user/scripts/mtd_storage.sh  
+
+        ##### RM2100 | Storage=90MB | Tmp=30MB #####
+        # 1. 修改内核配置：Storage 分区设为 90MB
+        # 计算：90 * 1024 * 1024 = 94371840 (十进制) = 0x5A00000 (十六进制)
+        # 剩余系统空间 = 128MB - 90MB = 38MB (非常充足)
+        sed -i 's/SIZ=0x0400000/SIZ=0x5A00000/g' /opt/$REPO_NAME/trunk/configs/boards/RM2100/kernel-3.4.x-5.0.config
+        # 2. 修改 dev_init.sh：/etc/storage 空间限制设为 90M
+        sed -i 's/size_etc="6M"/size_etc="90M"/g' /opt/$REPO_NAME/trunk/user/scripts/dev_init.sh
+        # 3. 修改 dev_init.sh：/tmp 内存临时目录限制设为 30M
+        sed -i 's/size_tmp="24M"/size_tmp="30M"/g' /opt/$REPO_NAME/trunk/user/scripts/dev_init.sh
+        # 4. 修改 mtd_storage.sh：保存检查大小设为 90MB 的字节数
+        # 90MB = 94371840 字节
+        sed -i 's/mtd_part_size=65536/mtd_part_size=94371840/g' /opt/$REPO_NAME/trunk/user/scripts/mtd_storage.sh
 
     - name: Build Firmware
       env:
