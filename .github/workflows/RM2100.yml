@@ -64,7 +64,7 @@ jobs:
       env:
         TNAME: RM2100
         KERNEL: 3.4
-        MHZ: 1200  # 定义CPU超频频率，必须为20的倍数
+        MHZ: 1100  # 定义CPU超频频率，必须为20的倍数
       run: |
         # 从环境变量中获取源码根目录路径
         SRC_DIR=${{ env.SRC_DIR }}
