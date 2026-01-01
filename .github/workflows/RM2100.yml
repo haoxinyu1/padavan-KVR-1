@@ -127,6 +127,7 @@ jobs:
         sed -i '/CONFIG_FIRMWARE_INCLUDE_IMQ/d' .config
         sed -i '/CONFIG_FIRMWARE_INCLUDE_IFB/d' .config
         sed -i '/CONFIG_FIRMWARE_INCLUDE_IPSET/d' .config
+        sed -i '/CONFIG_FIRMWARE_INCLUDE_TUN/d' .config
         sed -i '/CONFIG_FIRMWARE_INCLUDE_NFSD/d' .config
         sed -i '/CONFIG_FIRMWARE_INCLUDE_NFSC/d' .config
         sed -i '/CONFIG_FIRMWARE_INCLUDE_CIFS/d' .config
@@ -265,8 +266,11 @@ jobs:
         ##包含用于流量整形的 IFB 模块。约 0.03MB
         echo "CONFIG_FIRMWARE_INCLUDE_IFB=y" >> .config
 
-        ##包含 IPSet 工具和内核模块。约 0.4MB
-        #echo "CONFIG_FIRMWARE_INCLUDE_IPSET=y" >> .config
+        ## [已修正] 开启 IPSet 工具和内核模块
+        echo "CONFIG_FIRMWARE_INCLUDE_IPSET=y" >> .config
+
+        ## [新增] 开启 TUN 模块 (Clash TUN 模式必备)
+        echo "CONFIG_FIRMWARE_INCLUDE_TUN=y" >> .config
 
         ##包含 NFSv3 服务器。约 0.6MB  已删除 /trunk/user/httpd/common.h
         echo "CONFIG_FIRMWARE_INCLUDE_NFSD=n" >> .config
