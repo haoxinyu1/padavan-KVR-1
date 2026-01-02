@@ -107,7 +107,11 @@ lucky_dl() {
 	length=`expr $length / 1048576`
  	lucky_size0="$(check_disk_size $bin_path)"
  	[ ! -z "$length" ] && logg "程序大小 ${length}M， 程序路径可用空间 ${lucky_size0}M "
-        curl -Lko "/tmp/lucky.tar.gz" "${lk_url}" || wget --no-check-certificate -O "/tmp/lucky.tar.gz" "${lk_url}" || curl -Lko "/tmp/lucky.tar.gz" "${lk_url1}" || wget --no-check-certificate -O "/tmp/lucky.tar.gz" "${lk_url1}" || curl -Lko "/tmp/lucky.tar.gz" "${lk_url2}" || wget --no-check-certificate -O "/tmp/lucky.tar.gz" "${lk_url2}" || curl -Lko "/tmp/lucky.tar.gz" "${proxy}https://github.com/gdy666/lucky/releases/download/${tag}/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz" || wget --no-check-certificate -O "/tmp/lucky.tar.gz" "${proxy}https://github.com/gdy666/lucky/releases/download/${tag}/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz"
+        # 优化下载逻辑：增加 -f (失败时不写入) 和超时设置，确保能自动切换到备用链接
+        curl -fLko "/tmp/lucky.tar.gz" --connect-timeout 5 --max-time 60 "${lk_url}" || wget --no-check-certificate -T 15 -t 2 -O "/tmp/lucky.tar.gz" "${lk_url}" || \
+        curl -fLko "/tmp/lucky.tar.gz" --connect-timeout 5 --max-time 60 "${lk_url1}" || wget --no-check-certificate -T 15 -t 2 -O "/tmp/lucky.tar.gz" "${lk_url1}" || \
+        curl -fLko "/tmp/lucky.tar.gz" --connect-timeout 5 --max-time 60 "${lk_url2}" || wget --no-check-certificate -T 15 -t 2 -O "/tmp/lucky.tar.gz" "${lk_url2}" || \
+        curl -fLko "/tmp/lucky.tar.gz" --connect-timeout 5 --max-time 60 "${proxy}https://github.com/gdy666/lucky/releases/download/${tag}/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz" || wget --no-check-certificate -T 15 -t 2 -O "/tmp/lucky.tar.gz" "${proxy}https://github.com/gdy666/lucky/releases/download/${tag}/lucky_${new_tag}_Linux_mipsle_softfloat.tar.gz"
 	if [ "$?" = 0 ] ; then
 		tar -xzf /tmp/lucky.tar.gz -C /tmp/var
 		
